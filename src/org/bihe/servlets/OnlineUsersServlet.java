@@ -17,15 +17,32 @@ import java.util.List;
 @WebServlet(name = "OnlineUsersServlet", urlPatterns = "/onlineUsers", asyncSupported = true)
 
 public class OnlineUsersServlet extends HttpServlet {
-    private List<AsyncContext> contexts = new LinkedList<>();
+    private static final List<AsyncContext> CONTEXTS = new LinkedList<>();
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
-        this.contexts.clear();
-
         ServletContext servletContext = request.getServletContext();
+        sendUpdatedOnlineUsers(servletContext);
+
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if (request.getSession(false) == null) {
+            response.sendError(400);
+        } else {
+            final AsyncContext asyncOnlineContext = request.startAsync(request, response);
+//            asyncOnlineContext.setTimeout(10 * 1000);
+            CONTEXTS.add(asyncOnlineContext);
+        }
+
+    }
+
+    public static void sendUpdatedOnlineUsers(ServletContext servletContext) {
+        List<AsyncContext> asyncContexts = new ArrayList<>(CONTEXTS);
+        CONTEXTS.clear();
+
+        // getting all the usernames and make a list of them
         List<HttpSession> onlineUsersSessions;
         onlineUsersSessions = (LinkedList<HttpSession>) servletContext.getAttribute("onlineUsersSessions");
         StringBuilder htmlMessage = new StringBuilder("<p><b> Online users are :</b><br/>");
@@ -34,16 +51,7 @@ public class OnlineUsersServlet extends HttpServlet {
             htmlMessage.append("<p>").append(user).append("</p>");
         }
 
-//        String name = request.getParameter("name");
-//        String message = request.getParameter("message");
-//        ServletContext sc = request.getServletContext();
-//        if (sc.getAttribute("messages") == null) {
-//            sc.setAttribute("messages", htmlMessage);
-//        } else {
-//            String currentMessages = (String) sc.getAttribute("messages");
-//            sc.setAttribute("messages", htmlMessage + currentMessages);
-//        }
-
+        // sending the usernames list to all async requests
         String message = htmlMessage.toString();
         for (AsyncContext asyncContext : asyncContexts) {
             try (PrintWriter writer = asyncContext.getResponse().getWriter()) {
@@ -55,9 +63,4 @@ public class OnlineUsersServlet extends HttpServlet {
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final AsyncContext asyncOnlineContext = request.startAsync(request, response);
-        asyncOnlineContext.setTimeout(10 * 60 * 1000);
-        contexts.add(asyncOnlineContext);
-    }
 }

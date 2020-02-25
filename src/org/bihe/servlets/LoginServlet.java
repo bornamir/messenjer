@@ -19,6 +19,7 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         String username = request.getParameter("username");
         session.setAttribute("username", username);
+        session.setMaxInactiveInterval(20);
         //TODO if login is successful, update online users
 
         request.getRequestDispatcher("onlineUsers").include(request,response);

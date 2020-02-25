@@ -12,7 +12,7 @@
     if (session == null) {
         response.sendRedirect("/");
     }
-    assert session != null;%>
+%>
 
 <html>
 <head>
@@ -32,14 +32,15 @@
             List<HttpSession> onlineUsersSessions;
             onlineUsersSessions = (LinkedList<HttpSession>) application.getAttribute("onlineUsersSessions");
             for (HttpSession se : onlineUsersSessions) {
-                String user = (String) se.getAttribute("username");
-                htmlMessage.append("<p>").append(user).append("</p>");
+                if (se != null) {
+                    String user = (String) se.getAttribute("username");
+                    htmlMessage.append("<p>").append(user).append("</p>");
+                }
             }
         }
     %>
     <%= htmlMessage.toString()%>
 </div>
-
 
 
 <script>
@@ -63,6 +64,6 @@
 
     setInterval(getMessages, 1000);
 </script>
-<jsp:include page="footer.jsp" />
+<jsp:include page="footer.jsp"/>
 </body>
 </html>

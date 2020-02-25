@@ -1,5 +1,7 @@
 package org.bihe.listeners;
 
+import org.bihe.servlets.OnlineUsersServlet;
+
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -65,6 +67,7 @@ public class SessionListener implements ServletContextListener,
         onlineUsersSessions = (LinkedList<HttpSession>) servletContext.getAttribute("onlineUsersSessions");
         onlineUsersSessions.remove(se.getSession());
         servletContext.setAttribute("onlineUsersSessions", onlineUsersSessions);
+        OnlineUsersServlet.sendUpdatedOnlineUsers(servletContext);
 
 
 
