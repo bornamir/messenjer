@@ -2,22 +2,19 @@ package org.bihe.listeners;
 
 import org.bihe.servlets.OnlineUsersServlet;
 
-import javax.servlet.AsyncContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.*;
-import java.util.LinkedList;
-import java.util.List;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 @WebListener()
 public class SessionListener implements ServletContextListener,
         HttpSessionListener, HttpSessionAttributeListener {
 
-    ServletContext servletContext = null;
-    private static List<HttpSession> onlineUsersSessions = new LinkedList<>();
-    private static List<AsyncContext> onlineUsersContexts = new LinkedList<>();
 
 
     // Public constructor is required by servlet spec
@@ -33,9 +30,7 @@ public class SessionListener implements ServletContextListener,
          initialized(when the Web application is deployed).
          You can initialize servlet context related data here.
       */
-        servletContext = sce.getServletContext();
-        servletContext.setAttribute("onlineUsersContext", onlineUsersContexts);
-        servletContext.setAttribute("onlineUsersSessions", onlineUsersSessions);
+
 
     }
 
@@ -52,25 +47,15 @@ public class SessionListener implements ServletContextListener,
     public void sessionCreated(HttpSessionEvent se) {
         /* Session is created. */
 
-        /* adding the session to the session list*/
-        servletContext = se.getSession().getServletContext();
-        onlineUsersSessions = (LinkedList<HttpSession>) servletContext.getAttribute("onlineUsersSessions");
-        onlineUsersSessions.add(se.getSession());
-        servletContext.setAttribute("onlineUsersSessions", onlineUsersSessions);
-
-
     }
 
     public void sessionDestroyed(HttpSessionEvent se) {
         /* Session is destroyed. */
-        servletContext = se.getSession().getServletContext();
-        onlineUsersSessions = (LinkedList<HttpSession>) servletContext.getAttribute("onlineUsersSessions");
-        onlineUsersSessions.remove(se.getSession());
-        servletContext.setAttribute("onlineUsersSessions", onlineUsersSessions);
-        OnlineUsersServlet.sendUpdatedOnlineUsers(servletContext);
-
-
-
+        ServletContext servletContext = se.getSession().getServletContext();
+        if (OnlineUsersServlet.removeOnlineUserFromList(
+                (String) se.getSession().getAttribute("username"))) {
+            OnlineUsersServlet.sendUpdatedOnlineUsers(servletContext);
+        }
     }
 
     // -------------------------------------------------------
@@ -95,20 +80,5 @@ public class SessionListener implements ServletContextListener,
       */
     }
 
-//    private void sendOnlineUsers() {
-//        List<AsyncContext> asyncContexts = (LinkedList<AsyncContext>) servletContext.getAttribute("onlineUsersContexts");
-//        List<HttpSession> onlineUsersSessions = (LinkedList<HttpSession>) servletContext.getAttribute("onlineUsersSessions");
-//        for (HttpSession session : onlineUsersSessions) {
-//            session.
-//        String htmlMessage = "<p><b>" + name + "</b><br/>"
-//        }
-//        for (AsyncContext asyncContext : asyncContexts) {
-//            try (PrintWriter writer = asyncContext.getResponse().getWriter()) {
-//                writer.println(htmlMessage);
-//                writer.flush();
-//                asyncContext.complete();
-//            } catch (Exception ignored) {
-//            }
-//        }
-//    }
+
 }

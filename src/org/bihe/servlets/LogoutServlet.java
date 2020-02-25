@@ -14,7 +14,7 @@ public class LogoutServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
-            request.getRequestDispatcher("onlineUsers").include(request,response);
+//            request.getRequestDispatcher("onlineUsers").include(request,response);
 
         }
         response.sendRedirect("/messenjer");

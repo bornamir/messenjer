@@ -17,10 +17,6 @@
         <div class="col-md-5 ">
             <h1>Sign Up</h1>
             <form action="signup" method="post">
-                <div class="imgcontainer">
-                    <img src="statics/img_avatar2.png" alt="Avatar" class="avatar">
-                </div>
-
                 <div class="container">
                     <label><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="username" required>
