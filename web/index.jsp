@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: borna
-  Date: 2/6/20
-  Time: 2:42 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" session="false" %>
 <%
     if (request.getSession(false) != null) {
@@ -13,23 +6,43 @@
 %>
 <html>
 <head>
-    <title>$Title$</title>
+    <link rel="stylesheet" href="statics/custom.css">
+    <link rel="stylesheet" href="statics/bootstrap.min.css">
+    <title>Login:Messenjer</title>
 </head>
 <body>
-<h1>Login</h1>
-<form method="POST" action="login">
-    <table>
-        <tr>
-            <td>Your name:</td>
-            <td><input type="text" id="username" name="username"/></td>
-        </tr>
-        <tr>
-            <td><input type="submit" value="Login"/></td>
-        </tr>
-    </table>
-</form>
+<div class="container">
 
-<% request.getRequestDispatcher("footer.jsp").include(request, response); %>
+    <div class="row align-items-center">
+        <div class="col-md-5 ">
+            <h1>Login</h1>
+            <form action="login" method="post">
+                <div class="imgcontainer">
+                    <img src="statics/img_avatar2.png" alt="Avatar" class="avatar">
+                </div>
+
+                <div class="container">
+                    <label for="uname"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="username" required>
+
+                    <label for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="password" required>
+
+                    <button type="submit">Login</button>
+                    <label>
+                        <input type="checkbox" checked="checked" name="remember"> Remember me
+                    </label>
+                </div>
+                <div class="container" style="background-color:#f1f1f1">
+                    <span>Not Registered yet? <a href="register">SignUp!</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<jsp:include page="footer.jsp"/>
+
 
 </body>
 </html>
+

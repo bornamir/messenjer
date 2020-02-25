@@ -80,18 +80,18 @@ public class UserDoaImpl implements UserDAO {
 
     @Override
     public User getUserByUsername(String username) {
-        String sql = "SELECT * FROM messenjer.Users where username=" + username;
+        String sql = "SELECT * FROM messenjer.Users where username=?";
         try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)
+             PreparedStatement pstmt = conn.prepareStatement(sql)
         ) {
-            if (rs.next()) {
-                return this.createUserFromResultSet(rs);
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return this.createUserFromResultSet(rs);
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
         return null;
     }
@@ -104,9 +104,9 @@ public class UserDoaImpl implements UserDAO {
         ) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getPassword());
-            pstmt.setString(3,user.getFirstName());
-            pstmt.setString(4,user.getLastName());
-            pstmt.setString(5,user.getEmail());
+            pstmt.setString(3, user.getFirstName());
+            pstmt.setString(4, user.getLastName());
+            pstmt.setString(5, user.getEmail());
 
             int i = pstmt.executeUpdate();
             if (i == 1) {   // if there is one affected row in the query.
