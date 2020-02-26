@@ -16,6 +16,8 @@
     <div class="row align-items-center">
         <div class="col-md-5 ">
             <h1>Login</h1>
+            <jsp:include page="partials/notifications.jsp"/>
+
             <form action="login" method="post">
                 <div class="imgcontainer">
                     <img src="statics/img_avatar2.png" alt="Avatar" class="avatar">
@@ -40,7 +42,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"/>
+<jsp:include page="partials/footer.jsp"/>
 
 
 </body>

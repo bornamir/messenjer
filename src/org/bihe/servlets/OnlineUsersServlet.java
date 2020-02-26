@@ -61,7 +61,6 @@ public class OnlineUsersServlet extends HttpServlet {
         List<AsyncContext> asyncContexts = new ArrayList<>(CONTEXTS);
         CONTEXTS.clear();
         String message = getOnlineUsersToHtml();
-
         for (AsyncContext asyncContext : asyncContexts) {
             try (PrintWriter writer = asyncContext.getResponse().getWriter()) {
                 writer.println(message);

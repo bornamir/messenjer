@@ -26,22 +26,9 @@
 <h2> Online Users:</h2>
 
 <div id="onlineUsersDiv">
-    <%
-        StringBuilder htmlMessage = new StringBuilder("<p><b> Online users are :</b><br/>");
-        if (application.getAttribute("onlineUsersSessions") != null) {
-            List<HttpSession> onlineUsersSessions;
-            onlineUsersSessions = (LinkedList<HttpSession>) application.getAttribute("onlineUsersSessions");
-            for (HttpSession se : onlineUsersSessions) {
-                if (se != null) {
-                    String user = (String) se.getAttribute("username");
-                    htmlMessage.append("<p>").append(user).append("</p>");
-                }
-            }
-        }
-    %>
-    <%= htmlMessage.toString()%>
+
 </div>
-<jsp:include page="footer.jsp"/>
+<jsp:include page="partials/footer.jsp"/>
 
 <script src="statics/main.js"></script>
 </body>

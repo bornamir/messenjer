@@ -1,5 +1,7 @@
 package org.bihe.listeners;
 
+import org.bihe.daoimpl.UserDoaImpl;
+import org.bihe.interfaces.UserDAO;
 import org.bihe.servlets.OnlineUsersServlet;
 
 import javax.servlet.ServletContext;
@@ -10,11 +12,11 @@ import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.List;
 
 @WebListener()
 public class SessionListener implements ServletContextListener,
         HttpSessionListener, HttpSessionAttributeListener {
-
 
 
     // Public constructor is required by servlet spec
@@ -31,6 +33,12 @@ public class SessionListener implements ServletContextListener,
          You can initialize servlet context related data here.
       */
 
+        // Creating the list of all users in application scope
+        // so there would be no need to query for it all the time
+        List<String> users;
+        UserDAO userDAO = new UserDoaImpl();
+        users = userDAO.getAllUsernames();
+        sce.getServletContext().setAttribute("users", users);
 
     }
 

@@ -16,6 +16,8 @@
     <div class="row align-items-center">
         <div class="col-md-5 ">
             <h1>Sign Up</h1>
+            <jsp:include page="partials/notifications.jsp"/>
+
             <form action="signup" method="post">
                 <div class="container">
                     <label><b>Username</b></label>
@@ -31,7 +33,7 @@
                     <input type="text" placeholder="Enter First Name" name="firstName" >
 
                     <label><b>Last Name</b></label>
-                    <input type="text" placeholder="Enter Last Name" name="Last Name" >
+                    <input type="text" placeholder="Enter Last Name" name="LastName" >
 
                     <label><b>Email</b></label>
                     <input type="text" placeholder="Enter Email" name="email" >
@@ -45,7 +47,7 @@
         </div>
     </div>
 </div>
-<jsp:include page="footer.jsp"/>
+<jsp:include page="partials/footer.jsp"/>
 
 
 </body>
