@@ -52,6 +52,6 @@ public class SignUpServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("register");
+        request.getRequestDispatcher("register").forward(request,response);
     }
 }

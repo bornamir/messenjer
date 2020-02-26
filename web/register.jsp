@@ -41,7 +41,7 @@
                     <button type="submit">SignUp</button>
                 </div>
                 <div class="container" style="background-color:#f1f1f1">
-                    <span> Registered before? <a href="signin">Log In!</a></span>
+                    <span> Registered before? <a href="login">Log In!</a></span>
                 </div>
             </form>
         </div>

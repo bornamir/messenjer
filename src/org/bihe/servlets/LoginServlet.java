@@ -46,6 +46,6 @@ public class LoginServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("signin");
+        request.getRequestDispatcher("signin").forward(request,response);
     }
 }

@@ -62,7 +62,7 @@ public class SessionListener implements ServletContextListener,
         ServletContext servletContext = se.getSession().getServletContext();
         if (OnlineUsersServlet.removeOnlineUserFromList(
                 (String) se.getSession().getAttribute("username"))) {
-            OnlineUsersServlet.sendUpdatedOnlineUsers();
+            OnlineUsersServlet.sendUpdatedUsersList(se.getSession().getServletContext());
         }
     }
 

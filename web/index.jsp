@@ -36,7 +36,7 @@
                     </label>
                 </div>
                 <div class="container" style="background-color:#f1f1f1">
-                    <span>Not Registered yet? <a href="register">SignUp!</a></span>
+                    <span>Not Registered yet? <a href="signup">SignUp!</a></span>
                 </div>
             </form>
         </div>
