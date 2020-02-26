@@ -25,7 +25,7 @@
 
 <h2> Online Users:</h2>
 
-<div id="content">
+<div id="onlineUsersDiv">
     <%
         StringBuilder htmlMessage = new StringBuilder("<p><b> Online users are :</b><br/>");
         if (application.getAttribute("onlineUsersSessions") != null) {

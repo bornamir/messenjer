@@ -20,9 +20,10 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //TODO authenticate users here
         System.out.println("I am in the login page");
-        String username = (String) request.getParameter("username");
-        String password = (String) request.getParameter("password");
+        String username =  request.getParameter("username");
+        String password =  request.getParameter("password");
         System.out.println(username);
+        System.out.println(password);
         User user = this.userDoa.getUserByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
             request.getRequestDispatcher("onlineUsers").include(request, response);
@@ -31,6 +32,8 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("username", username);
                 session.setMaxInactiveInterval(10 * 60);
                 response.sendRedirect("chatPage");
+
+
             } else { // the user is already logged in and have another session
                 System.out.println(" already logged in");
 
@@ -48,6 +51,6 @@ public class LoginServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("i am in the  GET");
+        response.sendRedirect("signin");
     }
 }

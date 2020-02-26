@@ -25,12 +25,11 @@ public class OnlineUsersServlet extends HttpServlet {
     // New user is trying to logged in, should add new online user and send to all
     // if the user is not online already!
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = (String) request.getParameter("username");
+        String username = request.getParameter("username");
         if (username != null && !onlineUsers.contains(username)) {
             request.setAttribute("valid",true);
-            onlineUsers.add((String) request.getAttribute("username"));
-            ServletContext servletContext = request.getServletContext();
-            sendUpdatedOnlineUsers(servletContext);
+            onlineUsers.add(username);
+            sendUpdatedOnlineUsers();
 
         } else {
             request.setAttribute("valid",false);
@@ -44,26 +43,25 @@ public class OnlineUsersServlet extends HttpServlet {
 
         if (request.getSession(false) == null) {
             response.sendError(400);
-        } else {
+        } else if ("1".equals(request.getParameter("updated"))) {
             final AsyncContext asyncOnlineContext = request.startAsync(request, response);
             asyncOnlineContext.setTimeout(15 * 10 * 1000);
             CONTEXTS.add(asyncOnlineContext);
+        } else {
+            try (PrintWriter writer = response.getWriter()) {
+                String message = getOnlineUsersToHtml();
+                writer.println(message);
+                writer.flush();
+            }
         }
 
     }
 
-    public static void sendUpdatedOnlineUsers(ServletContext servletContext) {
+    public static void sendUpdatedOnlineUsers() {
         List<AsyncContext> asyncContexts = new ArrayList<>(CONTEXTS);
         CONTEXTS.clear();
+        String message = getOnlineUsersToHtml();
 
-        // getting all the usernames and make a list of them
-        StringBuilder htmlMessage = new StringBuilder("<p><b> Online users are :</b><br/>");
-        for (String user : onlineUsers) {
-            htmlMessage.append("<p>").append(user).append("</p>");
-        }
-
-        // sending the usernames list to all async requests
-        String message = htmlMessage.toString();
         for (AsyncContext asyncContext : asyncContexts) {
             try (PrintWriter writer = asyncContext.getResponse().getWriter()) {
                 writer.println(message);
@@ -72,6 +70,17 @@ public class OnlineUsersServlet extends HttpServlet {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private static String getOnlineUsersToHtml() {
+        // getting all the usernames and make a list of them
+        StringBuilder htmlMessage = new StringBuilder("<div id=\"onlineUsersList\"><p><b> Online users are :</b></p><br/>");
+        for (String user : onlineUsers) {
+            htmlMessage.append("<p>").append(user).append("</p>");
+        }
+        htmlMessage.append("</div>");
+        // sending the usernames list to all async requests
+        return htmlMessage.toString();
     }
 
     public static boolean removeOnlineUserFromList(String username) {
