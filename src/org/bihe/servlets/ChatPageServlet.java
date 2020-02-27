@@ -16,12 +16,12 @@ public class ChatPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //        HttpSession session = request.getSession(false);
 //        String username = (String) session.getAttribute("username");
-        //TODO chat logic here
 //
         if (request.getSession(false) == null) {
             response.sendRedirect("/messenjer");
         } else {
-            String username = (String) request.getSession(false).getAttribute("username");
+
+//            String username = (String) request.getSession(false).getAttribute("username");
             request.getRequestDispatcher("/chatPage.jsp").forward(request, response);
         }
     }

@@ -19,6 +19,9 @@ public class OnlineUsersServlet extends HttpServlet {
     private static final List<AsyncContext> CONTEXTS = new LinkedList<>();
     private static final List<String> onlineUsers = new LinkedList<>();
 
+    public static List<String> getOnlineUsers() {
+        return onlineUsers;
+    }
 //    private static ServletContext servletContext = getServletContext();
 //    private static List<AsyncContext> onlineUsersContexts = new LinkedList<>();
 

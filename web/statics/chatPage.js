@@ -53,7 +53,6 @@ function populate_to_inbox_chat(users, onlineUsers) {
 
 function searchUser() {
     var searchUser = document.getElementById('search_input').value;
-    console.log(searchUser)
     if (global_users.find(function (e) {
         return e === searchUser
     }) === undefined) {

@@ -15,11 +15,11 @@ img{ max-width:100%;}
 .top_spac{ margin: 20px 0 0;}
 
 
-.recent_heading {float: left; width:40%;}
+.recent_heading {float: left; width:50%;}
 .srch_bar {
     display: inline-block;
     text-align: right;
-    width: 60%;
+    width: 50%;
 }
 .headind_srch{ padding:10px 29px 10px 20px; overflow:hidden; border-bottom:1px solid #c4c4c4;}
 
@@ -28,13 +28,14 @@ img{ max-width:100%;}
     font-size: 21px;
     margin: auto;
 }
-.srch_bar input{ border:1px solid #cdcdcd; border-width:0 0 1px 0; width:80%; padding:2px 0 4px 6px; background:none;}
+.srch_bar input{ border:1px solid #cdcdcd; border-width:0 0 1px 0; width:90%; padding:2px 0 4px 6px; background:none;}
 .srch_bar .input-group-addon button {
     background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
     border: medium none;
     padding: 0;
     color: #707070;
     font-size: 18px;
+    cursor: pointer;
 }
 .srch_bar .input-group-addon { margin: 0 0 0 -27px;}
 
@@ -92,7 +93,7 @@ img{ max-width:100%;}
 .mesgs {
     float: left;
     padding: 30px 15px 0 25px;
-    width: 60%;
+    width: 100%;
 }
 
 .sent_msg p {

@@ -8,21 +8,31 @@ public class Message {
     private Integer senderID;
     private Integer receiverID;
     private ZonedDateTime created_date; // It is a better practice, but MariaDB does not support timezones literals.
-
+    private String messageType;
     public Message() {
     }
 
-    public Message(Integer ID, String message, Integer senderID, Integer receiverID, ZonedDateTime created_date) {
-        this.ID = ID;
+    public Message(String message, Integer senderID, Integer receiverID, ZonedDateTime created_date, String messageType) {
         this.message = message;
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.created_date = created_date;
+        this.messageType = messageType;
     }
+
     //TODO Convert a message to a compatible format to use in UI
     public String toHtmlFormat(Message message) {
         return null;
     }
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
+
     public Integer getReceiverID() {
         return receiverID;
     }

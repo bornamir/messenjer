@@ -34,6 +34,7 @@ public class MessageDoaImpl implements MessageDAO {
         String dateTime = rs.getString("CreatedDate");
         ZonedDateTime zn = ZonedDateTime.parse(dateTime + DEFAULT_ZONE_OFFSET, FORMATTER_FROM_SQL);
         message.setCreated_date(zn);
+        message.setMessageType(rs.getString("MessageType"));
 
         return message;
     }
@@ -64,6 +65,33 @@ public class MessageDoaImpl implements MessageDAO {
     }
 
     @Override
+    public boolean saveMessage(Message message) {
+        String sql = "INSERT INTO messenjer.Messages (Message, SenderID, ReceiverID, CreatedDate,MessageType) VALUES (?,?,?,?,?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setString(1, message.getMessage());
+            pstmt.setInt(2,message.getSenderID());
+            pstmt.setInt(3, message.getReceiverID());
+            pstmt.setString(4, FORMATTER_TO_SQL.format(message.getCreated_date()));
+            pstmt.setString(5, message.getMessageType());
+
+            int i = pstmt.executeUpdate();
+            if (i == 1) {   // if there is one affected row in the query.
+                return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+
+        return false;
+    }
+
+
+    @Override
     public Message getMessageByID(Integer id) {
         String sql = "SELECT * FROM messenjer.Messages where ID=" + id;
         try (Connection conn = getConnection();
@@ -80,31 +108,6 @@ public class MessageDoaImpl implements MessageDAO {
         }
         return null;
     }
-
-    @Override
-    public boolean saveMessage(Message message) {
-        String sql = "INSERT INTO messenjer.Messages (Message, SenderID, ReceiverID, CreatedDate) VALUES (?,?,?,?)";
-
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)
-        ) {
-            pstmt.setString(1, message.getMessage());
-            pstmt.setInt(2,message.getSenderID());
-            pstmt.setInt(3, message.getReceiverID());
-            pstmt.setString(4, FORMATTER_TO_SQL.format(message.getCreated_date()));
-            int i = pstmt.executeUpdate();
-            if (i == 1) {   // if there is one affected row in the query.
-                return true;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-
-        }
-
-        return false;
-    }
-
 
     // No need for them in this phase of the project
     // TODO implement these methods
