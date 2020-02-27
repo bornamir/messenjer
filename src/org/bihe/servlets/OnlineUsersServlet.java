@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 @WebServlet(name = "OnlineUsersServlet", urlPatterns = "/onlineUsers", asyncSupported = true)
@@ -51,14 +50,7 @@ public class OnlineUsersServlet extends HttpServlet {
         } else {
             try (ServletOutputStream out = response.getOutputStream()) {
                 List<String> users = (LinkedList<String>) request.getServletContext().getAttribute("users");
-                Map<String, List<String>> messageMap = new TreeMap<>();
-                messageMap.put("users", users);
-                messageMap.put("onlineUsers", onlineUsers);
-                Gson gson = new Gson();
-                String jsonMessage = gson.toJson(messageMap);
-                System.out.println(jsonMessage);
-
-//                String message = getUserListToHtml(onlineUsers, users);
+                String jsonMessage = getUserListToHtml(onlineUsers, users);
                 response.setContentType("application/json;charset=UTF-8");
                 out.print(jsonMessage);
                 out.flush();
@@ -74,9 +66,10 @@ public class OnlineUsersServlet extends HttpServlet {
 
         String message = getUserListToHtml(onlineUsers,users);
         for (AsyncContext asyncContext : asyncContexts) {
-            try (PrintWriter writer = asyncContext.getResponse().getWriter()) {
-                writer.println(message);
-                writer.flush();
+            try (ServletOutputStream out = asyncContext.getResponse().getOutputStream()) {
+                asyncContext.getResponse().setContentType("application/json;charset=UTF-8");
+                out.println(message);
+                out.flush();
                 asyncContext.complete();
             } catch (Exception ignored) {
             }
@@ -84,18 +77,13 @@ public class OnlineUsersServlet extends HttpServlet {
     }
 
     private static String getUserListToHtml(List<String> onlineUsers, List<String> users) {
-        // getting all the usernames and make a list of them
-        StringBuilder htmlMessage = new StringBuilder("<div id=\"onlineUsersList\"><p><b> Online users are :</b></p>");
-        for (String user : onlineUsers) {
-            htmlMessage.append("<p>").append(user).append("</p>");
-        }
-        htmlMessage.append("</div> <div id=\"allUsers\"><p><b> All users:</b></p>");
-        for (String user : users) {
-            htmlMessage.append("<p>").append(user).append("</p>");
-        }
-        htmlMessage.append("</div>");
-        // sending the usernames list to all async requests
-        return htmlMessage.toString();
+
+
+        Map<String, List<String>> messageMap = new TreeMap<>();
+        messageMap.put("users", users);
+        messageMap.put("onlineUsers", onlineUsers);
+        Gson gson = new Gson();
+        return gson.toJson(messageMap);
     }
 
     public static boolean removeOnlineUserFromList(String username) {
