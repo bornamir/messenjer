@@ -1,29 +1,34 @@
 package org.bihe.models;
 
+import com.google.gson.Gson;
+import org.bihe.sevices.MessageForSending;
+
 import java.time.ZonedDateTime;
 
 public class Message {
     private Integer ID;
     private String message;
-    private Integer senderID;
-    private Integer receiverID;
+    private User senderUser;
+    private User receiverUser;
     private ZonedDateTime created_date; // It is a better practice, but MariaDB does not support timezones literals.
     private String messageType;
     public Message() {
     }
 
-    public Message(String message, Integer senderID, Integer receiverID, ZonedDateTime created_date, String messageType) {
+    public Message(String message, User senderUser, User receiverID, ZonedDateTime created_date, String messageType) {
         this.message = message;
-        this.senderID = senderID;
-        this.receiverID = receiverID;
+        this.senderUser = senderUser;
+        this.receiverUser = receiverID;
         this.created_date = created_date;
         this.messageType = messageType;
     }
 
-    //TODO Convert a message to a compatible format to use in UI
-    public String toHtmlFormat(Message message) {
-        return null;
+    public String toJsonSendingFormat() {
+        Gson gson = new Gson();
+        MessageForSending messageForSending = new MessageForSending(this);
+        return gson.toJson(messageForSending);
     }
+
     public String getMessageType() {
         return messageType;
     }
@@ -33,12 +38,12 @@ public class Message {
     }
 
 
-    public Integer getReceiverID() {
-        return receiverID;
+    public User getReceiverUser() {
+        return receiverUser;
     }
 
-    public void setReceiverID(Integer receiverID) {
-        this.receiverID = receiverID;
+    public void setReceiverUser(User receiverUser) {
+        this.receiverUser = receiverUser;
     }
 
     public Integer getID() {
@@ -57,12 +62,12 @@ public class Message {
         this.message = message;
     }
 
-    public Integer getSenderID() {
-        return senderID;
+    public User getSenderUser() {
+        return senderUser;
     }
 
-    public void setSenderID(Integer senderID) {
-        this.senderID = senderID;
+    public void setSenderUser(User senderUser) {
+        this.senderUser = senderUser;
     }
 
     public ZonedDateTime getCreated_date() {

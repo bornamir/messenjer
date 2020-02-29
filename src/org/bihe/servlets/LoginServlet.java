@@ -36,13 +36,10 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("signin").forward(request, response);
             }
         } else { // username or password is incorrect
-            System.out.println(" incorrect");
 
             request.setAttribute("notif", "Username or Password is incorrect");
             request.getRequestDispatcher("signin").forward(request, response);
         }
-//TODO SHOW THE message in notif in log in and do the same for sign up
-
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -6,7 +6,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Integer ID;
+    private int ID;
 
     // Default constructor
     public User() {
