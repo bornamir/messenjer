@@ -15,6 +15,7 @@ public class MessageForSending {
     public MessageForSending(Message message) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EE dd MMMM");
+
         this.message = message.getMessage();
         this.senderUsername = message.getSenderUser().getUsername();
         this.receiverUsername = message.getReceiverUser().getUsername();

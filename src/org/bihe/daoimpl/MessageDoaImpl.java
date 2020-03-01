@@ -60,6 +60,36 @@ public class MessageDoaImpl implements MessageDAO {
     }
 
     @Override
+    public List<Message> getAllFilesBetweenTwoUsers(String user1, String user2) {
+        String sql = "select *" +
+                "from messenjer.Messages" +
+                "    inner join Users r on Messages.ReceiverID = r.ID" +
+                "    inner join Users s on Messages.SenderID = s.ID"+
+                " where ((s.username=? and r.username=?) or (s.username=? and r.username=?)) " +
+                    "and MessageType=\"file\" " +
+                "order by createddate";
+        try (Connection conn = getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)
+        ) {
+            pst.setString(1, user1);
+            pst.setString(2, user2);
+            pst.setString(3, user2);
+            pst.setString(4, user1);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                List<Message> messages = new LinkedList();
+                while (rs.next()) {
+                    messages.add(this.createMessageFromResultSet(rs));
+                }
+                return messages;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return null;    }
+
+    @Override
     public List<Message> getAllMessagesBetweenTwoUsers(String user1, String user2) {
         String sql = "select *" +
                 "from messenjer.Messages" +

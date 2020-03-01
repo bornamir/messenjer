@@ -8,7 +8,6 @@ import org.bihe.interfaces.MessageDAO;
 import org.bihe.interfaces.UserDAO;
 import org.bihe.models.Message;
 import org.bihe.models.User;
-import org.bihe.sevices.Constants;
 import org.bihe.sevices.MessageForSending;
 import org.javatuples.Pair;
 
@@ -34,12 +33,14 @@ public class UpdateMessageServlet extends HttpServlet {
 
     // for sending messages, saving them in database and sending them to the async SSE request.
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println(asyncContextMap);
+
         if (request.getSession(false) == null) { // user is not logged in
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
+
+
         String senderUsername = (String) request.getSession(false).getAttribute("username");
-        String receiverUsername = request.getParameter("user");
+        String receiverUsername = request.getParameter("receiver");
         String messageText = request.getParameter("message");
         String messageType = request.getParameter("type");
         User senderUser = userDAO.getUserByUsername(senderUsername);
@@ -49,25 +50,20 @@ public class UpdateMessageServlet extends HttpServlet {
         } else {
             ZonedDateTime zn = ZonedDateTime.now();
             Message message = new Message(messageText, senderUser, receiverUser, zn, messageType);
-            if (messageType.equals(Constants.TEXT_MESSAGE_TYPE)) {
-                int httpStatus = sendTextMessage(message);
-                if (httpStatus == 200 | httpStatus == 202) {
-                    response.setStatus(httpStatus);
-                    try (ServletOutputStream out = response.getOutputStream()) {
-                        String preparedMessage = message.toJsonSendingFormat();
-                        out.println( preparedMessage );
-                        out.flush();
-//                        response.sendError(httpStatus);
-                        return;
-                    }
+
+            int httpStatus = sendTextMessage(message);
+
+            if (httpStatus == 200 | httpStatus == 202) {
+                response.setStatus(httpStatus);
+                try (ServletOutputStream out = response.getOutputStream()) {
+                    String preparedMessage = message.toJsonSendingFormat();
+                    out.println(preparedMessage);
+                    out.flush();
+                    return;
                 }
-                System.out.println("out of status 200 or 202");
-                response.sendError(httpStatus);
-//                response.sendError(sendTextMessage(message));
-            } else if (messageType.equals(Constants.FILE_MESSAGE_TYPE)) {
-                //TODO logic for file sending type
-                response.sendError(sendTextMessage(message));
             }
+            System.out.println("out of status 200 or 202");
+            response.sendError(httpStatus);
         }
 
     }
@@ -88,7 +84,6 @@ public class UpdateMessageServlet extends HttpServlet {
                     out.flush();
                     return (HttpServletResponse.SC_OK);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     asyncContext = asyncContextMap.remove(pair);
                     asyncContext.complete();
                 }
@@ -114,7 +109,7 @@ public class UpdateMessageServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String listeningUser = (String) request.getSession(false).getAttribute("username");
-        String sendingUser = request.getParameter("user");
+        String sendingUser = request.getParameter("receiver");
         if (sendingUser == null) { // the receiver does not exist
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -137,7 +132,7 @@ public class UpdateMessageServlet extends HttpServlet {
                 asyncContextMap.put(userPair, asyncContext);
             }
         } else { //first get req, needs all the chats
-            List<Message> messages = messageDAO.getAllMessagesBetweenTwoUsers(listeningUser,sendingUser);
+            List<Message> messages = messageDAO.getAllMessagesBetweenTwoUsers(listeningUser, sendingUser);
             List<MessageForSending> allMessages = new LinkedList<>();
             for (Message message : messages) {
                 MessageForSending sendMessage = new MessageForSending(message);
@@ -146,7 +141,6 @@ public class UpdateMessageServlet extends HttpServlet {
             Gson gson = new Gson();
             String sendAllMessages = gson.toJson(allMessages);
             try (ServletOutputStream out = response.getOutputStream()) {
-                System.out.println(sendAllMessages);
                 out.println(sendAllMessages);
                 out.flush();
                 response.sendError(HttpServletResponse.SC_OK);

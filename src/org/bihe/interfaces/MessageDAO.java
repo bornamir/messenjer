@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface MessageDAO {
     List<Message> getAllMessagesBetweenTwoUsers(String user1, String user2) ;
+    List<Message> getAllFilesBetweenTwoUsers(String user1, String user2) ;
     boolean saveMessage (Message message);
     // Do not need now
     Message getMessageByID(Integer id);
