@@ -18,7 +18,7 @@ getAllMessages();
 
 function send() {
     if (fileInput.value === "") { // a text message is being sent
-        sendMessage();
+        sendTextMessage();
     } else { // a file is trying to be uploaded
         var file = fileInput.files[0];
 
@@ -31,12 +31,11 @@ function send() {
         xmlhttp.onreadystatechange = getResponseOfPost;
         xmlhttp.open("POST", "upload", true);
         xmlhttp.send(formData);
-        deselectFile();
+        unselectFile();
     }
 }
 
-function sendMessage() {
-
+function sendTextMessage() {
     var sendMessage = document.getElementById('message_input').value;
     if (sendMessage.trim() === "") {
         document.getElementById('message_input').value = "";
@@ -70,7 +69,7 @@ function getResponseOfPost() {
 
 var eventSource = new EventSource("updateMessage?receiver=" + userReceiver);
 eventSource.onerror = function (e) {
-    console.log("Error" );
+    console.log("Error");
     console.log(e);
 };
 eventSource.addEventListener('textMessage', function (e) {
@@ -85,6 +84,7 @@ function closeSSE() {
     console.log("closing");
     eventSource.close();
 }
+
 window.onbeforeunload = closeSSE;
 
 function addMsg(jsonMsg) {
@@ -141,8 +141,8 @@ function getDownload(fileName) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
 // xhr.responseType = 'blob';
-    xhr.onload = function (event){
-        var blob = new Blob([this.response],{type: xhr.getResponseHeader('content-type')});
+    xhr.onload = function (event) {
+        var blob = new Blob([this.response], {type: xhr.getResponseHeader('content-type')});
         var contentDispo = this.getResponseHeader('Content-Disposition');
         // var fileName = contentDispo.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1];
         console.log(contentDispo);
@@ -158,7 +158,6 @@ function getDownload(fileName) {
 }
 
 
-
 // handling sending file process -------------------------
 
 var fileInput = document.createElement("input");
@@ -166,72 +165,41 @@ fileInput.setAttribute("type", "file");
 fileInput.multiple = false;
 fileInput.oninput = selectedFile;
 
+function selectFile() {
+    fileInput.click();
+    selectedFile();
+}
+
 function selectedFile() {
-    if (fileInput.files.length > 0) {
-        if (fileInput.files[0].size > 1024 * 1024 * 10) {
+    if (fileInput.files.length > 0) { // if any file is selected
+        if (fileInput.files[0].size > 1024 * 1024 * 10) { // if the file size is more than 10 MB, dont let it
             document.getElementById("notif").innerHTML = "File size is more than 10 MB";
             fileInput.value = "";
-            return
+        } else {
+            document.getElementById("notif").innerHTML =
+                "This file is selected for uploading: " +
+                fileInput.files[0].name +
+                " <i onclick='unselectFile()' style='cursor: pointer; color: blue'> Cancel </i> ";
+            document.getElementById("message_input").disabled = true;
         }
-        document.getElementById("notif").innerHTML =
-            "This file is selected for uploading: " +
-            fileInput.files[0].name +
-            " <i onclick='deselectFile()' style='cursor: pointer; color: blue'> Cancel </i> ";
-        document.getElementById("message_input").disabled = true;
     } else {
         document.getElementById("message_input").disabled = false;
         document.getElementById("notif").innerHTML = "";
     }
 }
 
-function deselectFile() {
+function unselectFile() {
     fileInput.value = "";
     selectedFile();
 }
 
-function selectFile() {
-    fileInput.click();
-    selectedFile();
-}
 
-
+// pressing enter key in the input box will send the message
 document.getElementById("message_input")
-    .addEventListener("keyup", function(event) {
+    .addEventListener("keyup", function (event) {
         if (event.keyCode === 13) {
             event.preventDefault();
             send();
         }
     });
-
-// function addOutgoingMsg(jsonMsg) {
-//     var msg_history = document.getElementById("msg_history");
-//     var el = document.createElement("div");
-//     var inner = '    <div class="sent_msg">\n' +
-//         '    <p>Test which is a new approach to have all\n' +
-//         'solutions</p>\n' +
-//         '<span class="time_date"> 11:01 AM    |    June 9</span></div>'
-//
-//
-//     el.innerHTML = inner;
-//     msg_history.appendChild(el);
-// }
-
-// var messagesWaiting = false;
-//
-// function getMessages() {
-//     if (!messagesWaiting) {
-//         messagesWaiting = true;
-//         var xmlhttp = new XMLHttpRequest();
-//         xmlhttp.onreadystatechange = function () {
-//
-//             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-//                 messagesWaiting = false;
-//                 document.getElementById("notif").innerHTML =
-//                     "A message is received" + this.responseText;
-//             }
-//         };
-//         xmlhttp.open("GET", "updateMessage?user="+ userReceiver, true);
-//         xmlhttp.send();
-//     }
-// }
-// setInterval(getMessages, 1000);
+;

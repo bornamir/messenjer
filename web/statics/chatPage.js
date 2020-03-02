@@ -10,8 +10,6 @@ function getMessages() {
 
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 messagesWaiting = false;
-                // var contentElement = document.getElementById("onlineUsersDiv");
-                // contentElement.innerHTML = xmlhttp.responseText;
                 var jsonObj = JSON.parse(this.responseText);
                 var receivedOnlineUsers = jsonObj.onlineUsers;
                 var receivedUsers = jsonObj.users;
@@ -42,10 +40,11 @@ function populate_to_inbox_chat(users, onlineUsers) {
         if (onlineUsers.includes(users[i])) {
             out += "<img src=\"statics/user-profile-online.png\" alt=\"online\"></div>";
         } else {
-            out += "<img src=\"statics/user-profile-offline.png\" alt=\"offline\"></div>"
+            out += "<img src=\"statics/user-profile-offline.png\" alt=\"offline\"></div>";
         }
-        ;
-        out += "<div class=\"chat_ib\"><h5>  " + users[i] + "  <span class='chat_date' onclick=\"location.href='chatWith?user=" + users[i] + "';\" style='cursor: pointer;' > Click to chat </span></h5></div></div></div>";
+        out += "<div class=\"chat_ib\"><h5>  " + users[i] +
+            "  <span class='chat_date' onclick=\"location.href='chatWith?user=" +
+            users[i] + "';\" style='cursor: pointer;' > Click to chat </span></h5></div></div></div>";
     }
     document.getElementById("inbox_chat").innerHTML = out;
 
@@ -63,9 +62,8 @@ function searchUser() {
         if (global_onlineUsers.includes(searchUser)) {
             out += "<img src=\"statics/user-profile-online.png\" alt=\"online\"></div>";
         } else {
-            out += "<img src=\"statics/user-profile-offline.png\" alt=\"offline\"></div>"
+            out += "<img src=\"statics/user-profile-offline.png\" alt=\"offline\"></div>";
         }
-        ;
         out += "<div class=\"chat_ib\"><h5>  " + searchUser + "  <span class='chat_date' onclick=\"location.href='chatWith?user=" + searchUser + "';\" style='cursor: pointer;' > Click to chat </span></h5></div></div></div>";
         document.getElementById('search_inbox').innerHTML = out;
     }

@@ -45,11 +45,11 @@ public class OnlineUsersServlet extends HttpServlet {
 
         if (request.getSession(false) == null) {
             response.sendError(400);
-        } else if ("1".equals(request.getParameter("updated"))) {
+        } else if ("1".equals(request.getParameter("updated"))) { // user just want update information
             final AsyncContext asyncOnlineContext = request.startAsync(request, response);
             asyncOnlineContext.setTimeout(15 * 10 * 1000);
             CONTEXTS.add(asyncOnlineContext);
-        } else {
+        } else { // user needs all users and online users list
             try (ServletOutputStream out = response.getOutputStream()) {
                 List<String> users = (LinkedList<String>) request.getServletContext().getAttribute("users");
                 String jsonMessage = getUserListToJson(onlineUsers, users);
