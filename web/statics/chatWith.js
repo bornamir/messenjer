@@ -148,7 +148,6 @@ function getDownload(fileName) {
         console.log(contentDispo);
         console.log(fileName);
         console.log(blob);
-        saveBlob(blob, fileName);
         var a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
         a.download = fileName;
