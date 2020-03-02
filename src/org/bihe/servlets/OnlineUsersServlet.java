@@ -53,7 +53,7 @@ public class OnlineUsersServlet extends HttpServlet {
         } else {
             try (ServletOutputStream out = response.getOutputStream()) {
                 List<String> users = (LinkedList<String>) request.getServletContext().getAttribute("users");
-                String jsonMessage = getUserListToHtml(onlineUsers, users);
+                String jsonMessage = getUserListToJson(onlineUsers, users);
                 response.setContentType("application/json;charset=UTF-8");
                 out.print(jsonMessage);
                 out.flush();
@@ -67,7 +67,7 @@ public class OnlineUsersServlet extends HttpServlet {
         CONTEXTS.clear();
         List<String> users = (LinkedList<String>) servletContext.getAttribute("users");
 
-        String message = getUserListToHtml(onlineUsers,users);
+        String message = getUserListToJson(onlineUsers,users);
         for (AsyncContext asyncContext : asyncContexts) {
             try (ServletOutputStream out = asyncContext.getResponse().getOutputStream()) {
                 asyncContext.getResponse().setContentType("application/json;charset=UTF-8");
@@ -79,7 +79,7 @@ public class OnlineUsersServlet extends HttpServlet {
         }
     }
 
-    private static String getUserListToHtml(List<String> onlineUsers, List<String> users) {
+    private static String getUserListToJson(List<String> onlineUsers, List<String> users) {
 
 
         Map<String, List<String>> messageMap = new TreeMap<>();

@@ -70,12 +70,22 @@ function getResponseOfPost() {
 
 var eventSource = new EventSource("updateMessage?receiver=" + userReceiver);
 eventSource.onerror = function (e) {
-    console.log("Error" + e.data);
+    console.log("Error" );
+    console.log(e);
 };
 eventSource.addEventListener('textMessage', function (e) {
     var jsonMsg = JSON.parse(e.data);
     addMsg(jsonMsg);
 });
+eventSource.addEventListener("retryTime", function (e) {
+    console.log(e.data);
+});
+
+function closeSSE() {
+    console.log("closing");
+    eventSource.close();
+}
+window.onbeforeunload = closeSSE;
 
 function addMsg(jsonMsg) {
     var msg_history = document.getElementById("msg_history");
@@ -115,6 +125,9 @@ function addMsg(jsonMsg) {
     msg_history.scrollTop = msg_history.scrollHeight;
 }
 
+
+// handling downloading process -------------
+
 function getDownload(fileName) {
     console.log(fileName);
     // var fileName = this.parentElement.innerText.trim();
@@ -136,16 +149,14 @@ function getDownload(fileName) {
         console.log(fileName);
         console.log(blob);
         saveBlob(blob, fileName);
+        var a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        a.download = fileName;
+        a.dispatchEvent(new MouseEvent('click'));
     }
     xhr.send();
 }
 
-function saveBlob(blob, fileName) {
-    var a = document.createElement('a');
-    a.href = window.URL.createObjectURL(blob);
-    a.download = fileName;
-    a.dispatchEvent(new MouseEvent('click'));
-}
 
 
 // handling sending file process -------------------------
@@ -183,6 +194,14 @@ function selectFile() {
     selectedFile();
 }
 
+
+document.getElementById("message_input")
+    .addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            send();
+        }
+    });
 
 // function addOutgoingMsg(jsonMsg) {
 //     var msg_history = document.getElementById("msg_history");

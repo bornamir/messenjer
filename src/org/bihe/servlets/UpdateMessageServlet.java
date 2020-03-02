@@ -11,9 +11,7 @@ import org.bihe.models.User;
 import org.bihe.sevices.MessageForSending;
 import org.javatuples.Pair;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
+import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +60,6 @@ public class UpdateMessageServlet extends HttpServlet {
                     return;
                 }
             }
-            System.out.println("out of status 200 or 202");
             response.sendError(httpStatus);
         }
 
@@ -79,13 +76,13 @@ public class UpdateMessageServlet extends HttpServlet {
                     ServletOutputStream out = asyncContext.getResponse().getOutputStream();
                     String preparedMessage = message.toJsonSendingFormat();
                     System.out.println(preparedMessage);
-//                    out.println("event: textMessage\n");
                     out.println("event: textMessage\ndata: " + preparedMessage + "\n\n");
                     out.flush();
                     return (HttpServletResponse.SC_OK);
                 } catch (Exception e) {
                     asyncContext = asyncContextMap.remove(pair);
                     asyncContext.complete();
+                    return HttpServletResponse.SC_ACCEPTED; // connection to the receiver is lost
                 }
 
             } else { // The pair does not exist ( Probably the receiver is not logged in)
@@ -94,7 +91,6 @@ public class UpdateMessageServlet extends HttpServlet {
         } else {  // Message could not be saved
             return (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        return HttpServletResponse.SC_ACCEPTED; // connection to the receiver is lost (i.e. catch exception)
     }
 
     // for receiving async SSE request to listen to new messages
@@ -103,7 +99,6 @@ public class UpdateMessageServlet extends HttpServlet {
         if (request.getSession(false) == null) { // user is not logged in
             response.sendRedirect("/messenjer");
         }
-
         //initialize for server-sent events
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
@@ -114,14 +109,55 @@ public class UpdateMessageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+
+
         String sendAllChat = request.getParameter("all");
-        if (sendAllChat == null) {
+        if (sendAllChat == null) { // An async request for receiving message updates.
 
             final Pair<String, String> userPair = Pair.with(listeningUser, sendingUser);
 
             //to clear threads and allow for asynchronous execution
             final AsyncContext asyncContext = request.startAsync(request, response);
-            asyncContext.setTimeout(10 * 60 * 1000);
+            asyncContext.setTimeout(10 * 1000); // Inactive user or left the page
+
+            try {
+                ServletOutputStream out = asyncContext.getResponse().getOutputStream();
+                out.println("retry:500\nevent: retryTime\ndata: retry time has been sent " + "\n\n");
+                out.flush();
+            } catch (Exception e) {
+                asyncContext.complete();
+            }
+
+            asyncContext.addListener(new AsyncListener() {
+                @Override
+                public void onComplete(AsyncEvent asyncEvent) throws IOException {
+
+                }
+
+                @Override
+                public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+                    HttpServletResponse response = (HttpServletResponse) asyncEvent.getAsyncContext().getResponse();
+//                    response.sendError(205);
+                    asyncContextMap.remove(userPair);
+                    System.out.println("Async Context Timeout");
+                    asyncEvent.getAsyncContext().complete();
+
+                }
+
+                @Override
+                public void onError(AsyncEvent asyncEvent) throws IOException {
+                    HttpServletResponse response = (HttpServletResponse) asyncEvent.getAsyncContext().getResponse();
+                    response.sendError(400);
+                    asyncContextMap.remove(userPair);
+                    System.out.println("Erro in async context happend");
+                    asyncEvent.getAsyncContext().complete();
+                }
+
+                @Override
+                public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+
+                }
+            });
 
 
             //add context to list for later use
