@@ -8,7 +8,7 @@
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6">
             <p class="mb-0 text-center" >Design by <a target="_blank" href="https://bootsnipp.com/snippets/1ea0N">Sunil
-                Rajput</a> <br> Copyright © 2020 <a href="signin">Borna</a></p>
+                Rajput</a> <br> Copyright © 2020 <a href="login">Borna</a></p>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3">
             <form method="POST" action="logout">
@@ -27,7 +27,7 @@
                 <p><a href="#">Terms of Use</a> <a href="#">Privacy Policy</a></p>
             </div>
             <div class="col-lg-4 col-md-5 col-sm-6">
-                <p class="mb-0 text-right ">Copyright © 2020 <a href="signin">Borna</a></p>
+                <p class="mb-0 text-right ">Copyright © 2020 <a href="login">Borna</a></p>
             </div>
         </div>
     </div>

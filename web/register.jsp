@@ -6,6 +6,7 @@
 %>
 <html>
 <head>
+    <link rel="icon" href="statics/favicon.ico" type="image/png">
     <link rel="stylesheet" href="statics/custom.css">
     <link rel="stylesheet" href="statics/bootstrap.min.css">
     <title>SignUp:Messenjer</title>

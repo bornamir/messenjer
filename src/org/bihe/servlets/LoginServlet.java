@@ -23,8 +23,12 @@ public class LoginServlet extends HttpServlet {
 
         User user = this.userDoa.getUserByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
+            /* checking if user is already online. Then adding it to the online users list
+             and send the updated list to others. this is done by a post req to onlineUsers servlet*/
             request.getRequestDispatcher("onlineUsers").include(request, response);
             if ((boolean) request.getAttribute("valid")) {
+
+                /*session is only created here. */
                 HttpSession session = request.getSession(true);
                 session.setAttribute("username", username);
                 session.setMaxInactiveInterval(10 * 60);
@@ -33,16 +37,16 @@ public class LoginServlet extends HttpServlet {
 
             } else { // the user is already logged in and have another session
                 request.setAttribute("notif", "This user is already logged in");
-                request.getRequestDispatcher("signin").forward(request, response);
+                request.getRequestDispatcher("index.jsp").forward(request, response);
             }
         } else { // username or password is incorrect
 
             request.setAttribute("notif", "Username or Password is incorrect");
-            request.getRequestDispatcher("signin").forward(request, response);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("signin").forward(request,response);
+        request.getRequestDispatcher("index.jsp").forward(request,response);
     }
 }

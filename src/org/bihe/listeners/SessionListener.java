@@ -33,8 +33,9 @@ public class SessionListener implements ServletContextListener,
          You can initialize servlet context related data here.
       */
 
-        // Creating the list of all users in application scope
-        // so there would be no need to query for it all the time
+      /*get all the users list from database and add it to the app context
+      * So that other servlets has access to all the users list and
+      * do not execute query on database every time*/
         List<String> users;
         UserDAO userDAO = new UserDoaImpl();
         users = userDAO.getAllUsernames();
@@ -58,7 +59,8 @@ public class SessionListener implements ServletContextListener,
     }
 
     public void sessionDestroyed(HttpSessionEvent se) {
-        /* Session is destroyed. */
+        /* Session is destroyed. Remove user from onlineusers list in OnlineUsersServlet.
+        * Then send the update list to others.*/
         ServletContext servletContext = se.getSession().getServletContext();
         if (OnlineUsersServlet.removeOnlineUserFromList(
                 (String) se.getSession().getAttribute("username"))) {

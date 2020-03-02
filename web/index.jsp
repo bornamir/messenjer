@@ -6,6 +6,7 @@
 %>
 <html>
 <head>
+    <link rel="icon" href="statics/favicon.ico" type="image/png">
     <link rel="stylesheet" href="statics/custom.css">
     <link rel="stylesheet" href="statics/bootstrap.min.css">
     <title>Login:Messenjer</title>
@@ -31,9 +32,6 @@
                     <input type="password" placeholder="Enter Password" name="password" required>
 
                     <button type="submit">Login</button>
-                    <label>
-                        <input type="checkbox" checked="checked" name="remember"> Remember me
-                    </label>
                 </div>
                 <div class="container" style="background-color:#f1f1f1">
                     <span>Not Registered yet? <a href="signup">SignUp!</a></span>

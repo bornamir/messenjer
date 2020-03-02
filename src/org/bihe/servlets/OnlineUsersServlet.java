@@ -22,26 +22,25 @@ public class OnlineUsersServlet extends HttpServlet {
     public static List<String> getOnlineUsers() {
         return onlineUsers;
     }
-//    private static ServletContext servletContext = getServletContext();
-//    private static List<AsyncContext> onlineUsersContexts = new LinkedList<>();
 
-    // New user is trying to logged in, should add new online user and send to all
-    // if the user is not online already!
+
+    /* user is trying to logged in, should add new online user and send to all
+     if the user is not online already! if so, user can not log in again.*/
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
-        if (username != null && !onlineUsers.contains(username)) {
+        if (username != null && !onlineUsers.contains(username)) {  // user is not in the online users's list
             request.setAttribute("valid",true);
             onlineUsers.add(username);
-            sendUpdatedUsersList(request.getServletContext());
+            sendUpdatedUsersList(request.getServletContext()); // send new online user to others.
 
-        } else {
+        } else { // user in on the onlineusers's list and already logged in
             request.setAttribute("valid",false);
         }
 
 
     }
 
-    // A user is reached to ChatPage and wants to get the online users updates.
+     /*A user is reached to ChatPage and wants to get the online users updates.*/
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         if (request.getSession(false) == null) {
@@ -62,12 +61,16 @@ public class OnlineUsersServlet extends HttpServlet {
 
     }
 
+    /*This method sends <users> and <onlineusers> list to all the online users ( who have a async context
+    in the CONTEXTS list. This information is sent in the json format and will be used by the client to
+    produce the desire UI*/
     public static void sendUpdatedUsersList(ServletContext servletContext) {
+
         List<AsyncContext> asyncContexts = new ArrayList<>(CONTEXTS);
         CONTEXTS.clear();
         List<String> users = (LinkedList<String>) servletContext.getAttribute("users");
 
-        String message = getUserListToJson(onlineUsers,users);
+        String message = getUserListToJson(onlineUsers, users);
         for (AsyncContext asyncContext : asyncContexts) {
             try (ServletOutputStream out = asyncContext.getResponse().getOutputStream()) {
                 asyncContext.getResponse().setContentType("application/json;charset=UTF-8");
@@ -78,17 +81,15 @@ public class OnlineUsersServlet extends HttpServlet {
             }
         }
     }
-
+    /*get two lists and returns a json object with first list as users and second list as onlineUsers*/
     private static String getUserListToJson(List<String> onlineUsers, List<String> users) {
-
-
         Map<String, List<String>> messageMap = new TreeMap<>();
         messageMap.put("users", users);
         messageMap.put("onlineUsers", onlineUsers);
         Gson gson = new Gson();
         return gson.toJson(messageMap);
     }
-
+    /* Removes a user from onlineusers list. used by session listener when a session is timeout or terminated.*/
     public static boolean removeOnlineUserFromList(String username) {
         return onlineUsers.remove(username);
     }

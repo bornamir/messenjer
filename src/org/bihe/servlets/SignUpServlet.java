@@ -28,30 +28,30 @@ public class SignUpServlet extends HttpServlet {
                 String email = request.getParameter("email");
                 User user = new User(firstname, lastname, username, password1, email);
                 if (userDAO.saveUser(user)) {
-                    // adding new user to the users list and set attribute for servletcontext
+                    // adding new user to the users list and set attribute
                     users.add(username);
                     request.getServletContext().setAttribute("users",users);
 
                     request.setAttribute("notif", "You have successfully registered. Now you can log in.");
-                    request.getRequestDispatcher("signin").forward(request, response);
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                 } else { // saving to the database failed
                     request.setAttribute("notif", "Somethin went wrong. Try again or contact support");
-                    request.getRequestDispatcher("register").forward(request, response);
+                    request.getRequestDispatcher("register.jsp").forward(request, response);
                 }
 
             } else {  // the username is taken
                 request.setAttribute("notif", "Username is taken");
-                request.getRequestDispatcher("register").forward(request, response);
+                request.getRequestDispatcher("register.jsp").forward(request, response);
 
             }
 
         } else { // passwords do not match
             request.setAttribute("notif", "Passwords do not match");
-            request.getRequestDispatcher("register").forward(request, response);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("register").forward(request,response);
+        request.getRequestDispatcher("register.jsp").forward(request,response);
     }
 }

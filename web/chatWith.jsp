@@ -1,10 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" session="false" %>
+<%
+    HttpSession session = request.getSession(false);
+    if (session == null) {
+        response.sendRedirect("/");
+    }
+%>
 <html>
 <head>
     <title><%=request.getParameter("user")%> chat</title>
 
     <link rel="stylesheet" href="statics/chatPage.css">
-    <%--    <link rel="stylesheet" href="statics/bootstrap.min.css">--%>
+    <link rel="icon" href="statics/favicon.ico" type="image/png">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css"
           rel="stylesheet"
@@ -15,7 +21,8 @@
 <body onbeforeunload="closeSSE()">
 
 <div class="container">
-    <h5 class=" text-center">Chatting with <b style="color: blue"><%=request.getParameter("user")%>
+    <h5 class=" text-center"><a href="chatPage"><%=session.getAttribute("username")%> </a>
+        You are chatting with <b style="color: blue"><%=request.getParameter("user")%>
     </b></h5>
     <div class="messaging">
         <div class="inbox_msg">
